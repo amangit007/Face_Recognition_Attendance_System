@@ -11,6 +11,6 @@
 
 
 Screeshot of Homepage
+![Screenshot (306)](https://user-images.githubusercontent.com/65654655/132089610-8fa19a92-6407-4414-957a-3544428ed8d3.png)
 
-![Screenshot (301)](https://user-images.githubusercontent.com/65654655/129469977-3615f787-c11d-4fbb-88e3-45f399ff52e3.png)
 
