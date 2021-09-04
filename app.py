@@ -6,7 +6,6 @@ import tkinter.simpledialog as tsd
 import cv2, os
 import csv
 import numpy as np
-from PIL import Image
 import pandas as pd
 import datetime
 import time
@@ -16,7 +15,7 @@ from PIL import Image, ImageTk
 def clock_tower() :
     time_string = time.strftime('%H:%M:%S')
     clock.config(text=time_string)
-    clock.after(200, clock_tower)
+    clock.after(1000, clock_tower)
 
 def check_path(path) :
     dir = os.path.dirname(path)
@@ -87,7 +86,7 @@ def regis_face() :
                     break
             cam.release()
             cv2.destroyAllWindows()
-            res = "Images Taken for ID : " + Id
+            res = "Images Taken for ID : " + Id +" Name : "+name
             row = [serial, '', Id, '', name]
             with open('StudentDetails\StudentDetails.csv', 'a+') as csvFile :
                 writer = csv.writer(csvFile)
@@ -185,8 +184,8 @@ def regis_face() :
     message9.place(x=280, y=650)
 
     res = 0
-    exists = os.path.isfile("StudentDetails\StudentDetails.csv")
-    if exists :
+    #exists = os.path.exists("StudentDetails\StudentDetails.csv")
+    if os.path.exists("StudentDetails\StudentDetails.csv") :
         with open("StudentDetails\StudentDetails.csv", 'r') as csvFile1 :
             reader1 = csv.reader(csvFile1)
             for l in reader1 :
@@ -198,6 +197,77 @@ def regis_face() :
     message9.configure(text='Total Registered Faces : ' + str(res))
 
     window.mainloop()
+def view_face():
+    window = tk.Tk()
+    window.geometry("1200x720")
+
+    window.title("FACE RECOGNITION ATTENDANCE SYSTEM")
+    window.configure(background='#67f7ed')
+
+    datef = tk.Label(window, text="Today's Date : " + day + "-" + month + "-" + year, fg="black", bg="#67f7ed",
+                     width=40, height=1,
+                     font=('times', 30, ' bold '))
+    datef.place(x=120, y=70)
+
+    message3 = tk.Label(window, text="REGISTERED FACES", fg="red", bg="#30dbb9", width=55, height=1,
+                        font=('serif', 35, ' bold '))
+    message3.place(x=-190, y=0)
+
+
+
+
+    tv = ttk.Treeview(window, height=13, columns=('serial', 'id', 'name'))
+
+    tv.column('#0', width=82)
+    tv.column('serial', width=130)
+    tv.column('id', width=133)
+    tv.column('name', width=133)
+    tv.grid(row=2, column=4, padx=(250, 0), pady=(200, 0), columnspan=4)
+    tv.heading('#0', text='INDEX')
+    tv.heading('serial', text='SERIAL No.')
+    tv.heading('id', text='ID')
+    tv.heading('name', text='NAME')
+
+
+    for k in tv.get_children() :
+        tv.delete(k)
+    with open("StudentDetails\StudentDetails.csv", 'r') as csvFile5 :
+        reader1 = csv.reader(csvFile5)
+        i = 0
+
+        for lines in reader1 :
+            i = i + 1
+            if (i > 1) :
+                if (i % 2 != 0) :
+                    iidd = str(lines[0]) + '  '
+                    tv.insert('', 0, text=iidd, values=(str(lines[0]), str(lines[2]), str(lines[4])))
+
+
+
+
+
+
+    # datatype of menu text
+
+
+    # initial menu text
+
+
+
+
+
+
+
+
+    Button2 = tk.Button(window, text="Back", command=window.destroy, fg="red", bg="#30dbb9", width=25,
+                        activebackground="white",
+                        font=('times', 20, ' bold '))
+    Button2.place(x=385, y=500)
+
+    scroll = ttk.Scrollbar(window, orient='vertical', command=tv.yview)
+    scroll.grid(row=7, column=4, padx=(820, 100), pady=(400, 0), sticky='ns')
+    tv.configure(yscrollcommand=scroll.set)
+
 
 def passwordo():
 
@@ -208,6 +278,19 @@ def passwordo():
     password = tsd.askstring('Password', 'Enter Password', show='*')
     if (password == key):
         regis_face()
+
+    else:
+        mess._show(title='Wrong Password', message='You have entered wrong password')
+
+def passwordo2():
+
+
+    f = open("Internal_files\password.txt", "r")
+    key = f.read()
+
+    password = tsd.askstring('Password', 'Enter Password', show='*')
+    if (password == key):
+        view_face()
 
     else:
         mess._show(title='Wrong Password', message='You have entered wrong password')
@@ -223,10 +306,10 @@ def take_attendance():
     if exists3:
         recognizer.read("Internal_files\Trainner.yml")
     else:
-        mess._show(title='Data Missing', message='Please click on Save Profile to reset data!!')
+        mess._show(title='Data Missing', message='Error data missing')
         return
     harcascadePath = "Internal_files\haarcascade_frontalface_default.xml"
-    faceCascade = cv2.CascadeClassifier(harcascadePath);
+    faceCascade = cv2.CascadeClassifier(harcascadePath)
 
     cam = cv2.VideoCapture(0)
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -235,7 +318,7 @@ def take_attendance():
     if exists1:
         df = pd.read_csv("StudentDetails\StudentDetails.csv")
     else:
-        mess._show(title='Details Missing', message='Students details are missing, please check!')
+        mess._show(title='Details Missing', message='Students details are missing, please contact admin')
         cam.release()
         cv2.destroyAllWindows()
         window.destroy()
@@ -272,13 +355,16 @@ def take_attendance():
     if exists:
         with open("Attendance\Attendance_" + date + "_.csv", 'a+') as csvFile1:
             writer = csv.writer(csvFile1)
-            writer.writerow(attendance)
+            if attendance!='':
+                writer.writerow(attendance)
         csvFile1.close()
     else:
         with open("Attendance\Attendance_" + date + "_.csv", 'a+') as csvFile1:
             writer = csv.writer(csvFile1)
             writer.writerow(col_names)
-            writer.writerow(attendance)
+            if attendance!='':
+                writer.writerow(attendance)
+            
         csvFile1.close()
 
 def view_attendance() :
@@ -374,7 +460,7 @@ day, month, year = date.split("-")
 
 
 window = tk.Tk()
-window.geometry("1200x720")
+window.geometry("1200x800")
 window.iconphoto(True, tk.PhotoImage(file="icon1.gif"))
 
 
@@ -409,22 +495,28 @@ label1.place(x=518, y=200)
 
 
 
-
 Button = tk.Button(window, text="Register Face", command=passwordo, fg="red", bg="#30dbb9", width=40,
                    activebackground="white",
                    font=('times', 20, ' bold '))
 Button.place(x=280, y=380)
+Button0 = tk.Button(window, text="View Registered faces", command=passwordo2, fg="red", bg="#30dbb9", width=40,
+                    activebackground="white",
+                    font=('times', 20, ' bold '))
+Button0.place(x=280, y=460)
 Button1 = tk.Button(window, text="Take Attendance", command=take_attendance, fg="red", bg="#30dbb9", width=40,
                     activebackground="white",
                     font=('times', 20, ' bold '))
-Button1.place(x=280, y=460)
+Button1.place(x=280, y=540)
 Button2 = tk.Button(window, text="View Attendance", command=view_attendance, fg="red", bg="#30dbb9", width=40,
                     activebackground="white",
                     font=('times', 20, ' bold '))
-Button2.place(x=280, y=540)
+Button2.place(x=280, y=620)
 Button3 = tk.Button(window, text="Quit", command=window.destroy, fg="red", bg="#30dbb9", width=40,
                     activebackground="white",
                     font=('times', 20, ' bold '))
-Button3.place(x=280, y=620)
+Button3.place(x=280, y=700)
+
+
+
 
 window.mainloop()
