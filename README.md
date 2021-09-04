@@ -1,4 +1,4 @@
-"# Face_Recognition_Attendance_System" 
+"#Face_Recognition_Attendance_System" 
 1. This is face recognition based attendance system.
 2. Has capabality to add faces by gui.
 3. Protection of new registrations by password.
