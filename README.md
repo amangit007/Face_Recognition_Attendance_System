@@ -1,9 +1,13 @@
 "# Face_Recognition_Attendance_System" 
-This is face recognition based attendance system.
-Has capabality to add faces by gui.
-Protection of new registrations by password.
-Automated attendence taking.
-Can view details of attandance by date.
+1. This is face recognition based attendance system.
+2. Has capabality to add faces by gui.
+3. Protection of new registrations by password.
+4. Automated attendence taking.
+5. Can view details of attandance by date.
+
+
+
+
 
 Screeshot of Homepage
 
